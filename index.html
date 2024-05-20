@@ -14,6 +14,8 @@
 
 		<link rel="stylesheet" href="reset.css" />
 		<link rel="stylesheet" href="index.css" />
+
+		<script defer src="index.js"></script>
 	</head>
 
 	<body>
@@ -46,10 +48,27 @@
 					<div class="IconAdornment">
 						<img src="public/search-icon.svg" role="presentation" />
 
-						<input type="text" class="TextField__input" placeholder="Search notes..." />
+						<input
+							type="text"
+							id="search-bar"
+							class="TextField__input"
+							placeholder="Search notes..."
+						/>
 					</div>
 				</div>
+
+				<ul class="NoteList" id="note-renderer"></ul>
 			</div>
 		</main>
+
+		<template id="template-note">
+			<div class="Note">
+				<h2 class="Note__title">{title}</h2>
+
+				<p class="Note__body">{content}</p>
+
+				<div class="Note__created-at">{createdAt}</div>
+			</div>
+		</template>
 	</body>
 </html>
