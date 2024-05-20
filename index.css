@@ -2,9 +2,18 @@
 	box-sizing: border-box;
 }
 
+body {
+	font-family: 'Inter', sans-serif;
+	font-size: 16px;
+	line-height: 1.6rem;
+}
+
 .Container {
 	padding: 16px;
 }
 
 .ViewTitle {
+	font-size: 1.25rem;
+	line-height: 1.875rem;
+	font-weight: 500;
 }
