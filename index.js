@@ -1,6 +1,7 @@
 const NOTE_TEMPLATE_ID = '#template-note';
 const NOTE_RENDERER_ROOT_ID = '#note-renderer';
 const SEARCH_BAR_ID = '#search-bar';
+const ADD_NOTE_BUTTON_ID = '#add-note';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const app = new NoteApp();
@@ -11,16 +12,19 @@ class NoteApp {
 	constructor() {
 		this.searchBar = new SearchBar();
 		this.noteRenderer = new NoteRenderer();
+		this.addNoteButton = getElement(ADD_NOTE_BUTTON_ID);
 
 		this.notes = [
-			new Note(1, 'Note 1', 'Body 1', 'May 22'),
-			new Note(2, 'Note 2', 'Body 2', 'May 22'),
-			new Note(3, 'Note 3', 'Body 3', 'May 22'),
+			new Note(0, 'Note 1', 'Body 1', 'May 22'),
+			new Note(1, 'Note 2', 'Body 2', 'May 22'),
+			new Note(2, 'Note 3', 'Body 3', 'May 22'),
 		];
 	}
 
 	initialize() {
 		this.#render();
+
+		this.addNoteButton.addEventListener('click', () => this.#addNewNote());
 	}
 
 	/**
@@ -34,6 +38,13 @@ class NoteApp {
 
 		const filteredNotes = this.notes.filter((note) => note.matchFilter(filter));
 		this.noteRenderer.render(filteredNotes);
+	}
+
+	#addNewNote() {
+		const note = new Note(this.notes.length, 'New Note', '', 'Today');
+		this.notes.push(note);
+
+		this.#render();
 	}
 }
 
