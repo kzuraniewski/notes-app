@@ -76,6 +76,11 @@ body {
 	box-shadow: 0px 4px 16px 0px #00000012;
 	font-size: 0.875rem;
 }
+.Note__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
 .Note__title {
 	font-weight: 500;
 	margin-bottom: 0.5rem;
@@ -85,4 +90,13 @@ body {
 	font-size: 0.75rem;
 	margin-top: 0.3rem;
 	color: var(--color-text-on-primary-light);
+}
+.Note__actions {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+.Note__action {
+	background: none;
+	border: none;
 }
