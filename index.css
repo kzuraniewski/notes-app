@@ -1,4 +1,6 @@
 :root {
+	--border-radius: 12px;
+
 	--color-primary: #ffffff;
 	--color-primary-muted: #eeeff0;
 	--color-primary-hover: #e7e7e7;
@@ -29,7 +31,12 @@ body {
 .AppBar {
 	padding: 1.2rem 0.4rem;
 }
-.AppBar__content {
+
+.AppContent {
+	padding: 10px 0;
+}
+
+.IconAdornment {
 	display: flex;
 	gap: 0.7rem;
 	align-items: center;
@@ -39,4 +46,16 @@ body {
 	font-size: 1.25rem;
 	line-height: 1.875rem;
 	font-weight: 500;
+}
+
+.TextField {
+	width: 100%;
+	padding: 8px 12px;
+	border-radius: var(--border-radius);
+	background-color: var(--color-primary-muted);
+}
+.TextField__input {
+	width: 100%;
+	border: none;
+	background-color: transparent;
 }
