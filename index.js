@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class NoteApp {
 	constructor() {
-		this.searchBar = new SearchBar();
-		this.noteRenderer = new NoteRenderer();
+		this.searchBar = getElement(SEARCH_BAR_ID);
 		this.addNoteButton = getElement(ADD_NOTE_BUTTON_ID);
+		this.noteRenderer = new NoteRenderer();
 
 		this.notes = [
 			new Note(0, 'Note 1', 'Body 1', 'May 22'),
@@ -24,6 +24,7 @@ class NoteApp {
 	initialize() {
 		this.#render();
 
+		this.searchBar.addEventListener('input', (event) => this.#handleFilterChange(event));
 		this.addNoteButton.addEventListener('click', () => this.#addNewNote());
 	}
 
@@ -45,6 +46,15 @@ class NoteApp {
 		this.notes.push(note);
 
 		this.#render();
+	}
+
+	/**
+	 * @param {Event} event
+	 */
+	#handleFilterChange(event) {
+		// @ts-ignore
+		const filter = event.target.value;
+		this.#render(filter);
 	}
 }
 
@@ -114,12 +124,6 @@ class PropertizedTemplate {
 	}
 }
 
-class SearchBar {
-	constructor() {
-		this.input = getElement(SEARCH_BAR_ID);
-	}
-}
-
 class Note {
 	/**
 	 * @param {number} id
@@ -138,7 +142,12 @@ class Note {
 	 * @param {string} filter
 	 */
 	matchFilter(filter) {
-		return this.title.includes(filter) || this.content.includes(filter);
+		const lowercaseFilter = filter.toLowerCase();
+		return (
+			this.title.toLowerCase().includes(lowercaseFilter) ||
+			this.content.toLowerCase().includes(lowercaseFilter) ||
+			this.createdAt.toLowerCase().includes(lowercaseFilter)
+		);
 	}
 }
 
