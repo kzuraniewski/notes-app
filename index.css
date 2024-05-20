@@ -1,3 +1,15 @@
+:root {
+	--color-primary: #ffffff;
+	--color-primary-muted: #eeeff0;
+	--color-primary-hover: #e7e7e7;
+	--color-primary-active: #bdbdbd;
+	--color-accent: #6b3c9b;
+	--color-accent-hover: #844dba;
+	--color-accent-active: #5b2f87;
+	--color-text-on-primary: #1b1c1e;
+	--color-text-on-accent: #ffffff;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -6,6 +18,8 @@ body {
 	font-family: 'Inter', sans-serif;
 	font-size: 16px;
 	line-height: 1.6rem;
+	background-color: var(--color-primary);
+	color: var(--color-text-on-primary);
 }
 
 .Container {
