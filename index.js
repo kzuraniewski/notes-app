@@ -2,6 +2,7 @@ const NOTE_TEMPLATE_ID = '#template-note';
 const NOTE_RENDERER_ROOT_ID = '#note-renderer';
 const SEARCH_BAR_ID = '#search-bar';
 const ADD_NOTE_BUTTON_ID = '#add-note';
+const EMPTY_DISCLAIMER_ID = '#empty-disclaimer';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const app = new NoteApp();
@@ -10,9 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class NoteApp {
 	constructor() {
-		this.searchBar = getElement(SEARCH_BAR_ID);
-		this.addNoteButton = getElement(ADD_NOTE_BUTTON_ID);
-		this.renderRoot = getElement(NOTE_RENDERER_ROOT_ID);
+		this.searchBar = ElementUtils.getElement(SEARCH_BAR_ID);
+		this.addNoteButton = ElementUtils.getElement(ADD_NOTE_BUTTON_ID);
+		this.renderRoot = ElementUtils.getElement(NOTE_RENDERER_ROOT_ID);
+		this.disclaimer = ElementUtils.getElement(EMPTY_DISCLAIMER_ID);
 		this.noteTemplate = new PropertizedTemplate(NOTE_TEMPLATE_ID);
 
 		this.listeners = [];
@@ -36,6 +38,11 @@ class NoteApp {
 	 */
 	#render(filter) {
 		this.#clearView();
+
+		if (!this.notes.length) {
+			ElementUtils.show(this.disclaimer);
+			return;
+		}
 
 		const filteredNotes = filter
 			? this.notes.filter((note) => note.matchFilter(filter))
@@ -67,6 +74,7 @@ class NoteApp {
 	}
 
 	#clearView() {
+		ElementUtils.hide(this.disclaimer);
 		this.renderRoot.innerHTML = '';
 	}
 
@@ -134,7 +142,7 @@ class PropertizedTemplate {
 	 * @param {string} query
 	 */
 	constructor(query) {
-		const element = getElement(query);
+		const element = ElementUtils.getElement(query);
 
 		if (!(element instanceof HTMLTemplateElement)) {
 			throw new Error(`${element} is not a template`);
@@ -186,17 +194,33 @@ class PropertizedTemplate {
 	}
 }
 
-/**
- * Returns a DOM element and asserts it exists
- * @param {string} query
- * @returns {Element}
- */
-const getElement = (query) => {
-	const element = document.querySelector(query);
+class ElementUtils {
+	/**
+	 * Returns a DOM element and asserts it exists
+	 * @param {string} query
+	 * @returns {Element}
+	 */
+	static getElement(query) {
+		const element = document.querySelector(query);
 
-	if (!element) {
-		throw new Error(`Element of query ${query} does not exist`);
+		if (!element) {
+			throw new Error(`Element of query ${query} does not exist`);
+		}
+
+		return element;
 	}
 
-	return element;
-};
+	/**
+	 * @param {Element} element
+	 */
+	static hide(element) {
+		element.classList.add('hidden');
+	}
+
+	/**
+	 * @param {Element} element
+	 */
+	static show(element) {
+		element.classList.remove('hidden');
+	}
+}
