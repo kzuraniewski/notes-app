@@ -12,8 +12,10 @@ class NoteApp {
 	constructor() {
 		this.searchBar = getElement(SEARCH_BAR_ID);
 		this.addNoteButton = getElement(ADD_NOTE_BUTTON_ID);
-		this.noteRenderer = new NoteRenderer();
+		this.renderRoot = getElement(NOTE_RENDERER_ROOT_ID);
+		this.noteTemplate = new PropertizedTemplate(NOTE_TEMPLATE_ID);
 
+		this.listeners = [];
 		this.notes = [
 			new Note(0, 'Note 1', 'Body 1', 'May 22'),
 			new Note(1, 'Note 2', 'Body 2', 'May 22'),
@@ -24,7 +26,8 @@ class NoteApp {
 	initialize() {
 		this.#render();
 
-		this.searchBar.addEventListener('input', (event) => this.#handleFilterChange(event));
+		// @ts-ignore
+		this.searchBar.addEventListener('input', (event) => this.#render(event.target.value));
 		this.addNoteButton.addEventListener('click', () => this.#addNewNote());
 	}
 
@@ -32,13 +35,39 @@ class NoteApp {
 	 * @param {string} [filter]
 	 */
 	#render(filter) {
-		if (!filter) {
-			this.noteRenderer.render(this.notes);
-			return;
-		}
+		this.#clearView();
 
-		const filteredNotes = this.notes.filter((note) => note.matchFilter(filter));
-		this.noteRenderer.render(filteredNotes);
+		const filteredNotes = filter
+			? this.notes.filter((note) => note.matchFilter(filter))
+			: this.notes;
+
+		filteredNotes.forEach((note) => this.#renderNote(note));
+	}
+
+	/**
+	 * @param {Note} note
+	 */
+	#renderNote(note) {
+		const noteElement = this.noteTemplate.build(
+			{
+				title: note.title,
+				content: note.content,
+				createdAt: note.createdAt,
+			},
+			{
+				edit: () => this.#editNote(note.id),
+				delete: () => this.#deleteNote(note.id),
+			}
+		);
+
+		const liElement = document.createElement('li');
+		liElement.appendChild(noteElement);
+
+		this.renderRoot.appendChild(liElement);
+	}
+
+	#clearView() {
+		this.renderRoot.innerHTML = '';
 	}
 
 	#addNewNote() {
@@ -49,47 +78,23 @@ class NoteApp {
 	}
 
 	/**
-	 * @param {Event} event
+	 * @param {number} id
 	 */
-	#handleFilterChange(event) {
-		// @ts-ignore
-		const filter = event.target.value;
-		this.#render(filter);
-	}
-}
-
-class NoteRenderer {
-	constructor() {
-		this.noteTemplate = new PropertizedTemplate(NOTE_TEMPLATE_ID);
-		this.root = getElement(NOTE_RENDERER_ROOT_ID);
-	}
+	#editNote(id) {}
 
 	/**
-	 * @param {Note[]} notes
+	 * @param {number} id
 	 */
-	render(notes) {
-		this.#clear();
-		notes.forEach((note) => this.#appendNote(note));
-	}
+	#deleteNote(id) {
+		const noteIndex = this.notes.findIndex((note) => note.id === id);
 
-	/**
-	 * @param {Note} note
-	 */
-	#appendNote(note) {
-		const noteElement = this.noteTemplate.build({
-			title: note.title,
-			content: note.content,
-			createdAt: note.createdAt,
-		});
+		if (noteIndex === -1) {
+			throw new Error(`Note of id ${id} does not exist`);
+		}
 
-		const liElement = document.createElement('li');
-		liElement.appendChild(noteElement);
+		this.notes.splice(noteIndex, 1);
 
-		this.root.appendChild(liElement);
-	}
-
-	#clear() {
-		this.root.innerHTML = '';
+		this.#render();
 	}
 }
 
@@ -111,15 +116,34 @@ class PropertizedTemplate {
 
 	/**
 	 * @param {Record<string, string>} properties
+	 * @param {Record<string, () => void>} actions
 	 */
-	build(properties) {
+	build(properties, actions) {
 		const parsedTemplate = this.#parseTemplate(properties);
 
 		// TODO: remove redundant div wrapper from result
 		const root = document.createElement('div');
 		root.innerHTML = parsedTemplate;
 
+		this.#hookActions(root, actions);
+
 		return root;
+	}
+
+	/**
+	 * @param {Element} element
+	 * @param {Record<string, () => void>} actions
+	 */
+	#hookActions(element, actions) {
+		Object.entries(actions).forEach(([event, listener]) => {
+			const actionElement = element.querySelector(`[data-action=${event}]`);
+
+			if (!actionElement) {
+				throw new Error(`Event ${event} missing in template ${this.template}`);
+			}
+
+			actionElement.addEventListener('click', listener);
+		});
 	}
 
 	/**
