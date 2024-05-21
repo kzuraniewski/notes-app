@@ -73,6 +73,8 @@ class NoteApp {
 	#addNewNote() {
 		const note = new Note(this.notes.length, 'New Note', '', 'Today');
 		this.notes.push(note);
+		// @ts-ignore
+		this.searchBar.value = '';
 
 		this.#render();
 	}
