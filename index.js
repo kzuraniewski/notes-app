@@ -100,6 +100,33 @@ class NoteApp {
 	}
 }
 
+class Note {
+	/**
+	 * @param {number} id
+	 * @param {string} title
+	 * @param {string} content
+	 * @param {string} createdAt
+	 */
+	constructor(id, title, content, createdAt) {
+		this.id = id;
+		this.title = title;
+		this.content = content;
+		this.createdAt = createdAt;
+	}
+
+	/**
+	 * @param {string} filter
+	 */
+	matchFilter(filter) {
+		const lowercaseFilter = filter.toLowerCase();
+		return (
+			this.title.toLowerCase().includes(lowercaseFilter) ||
+			this.content.toLowerCase().includes(lowercaseFilter) ||
+			this.createdAt.toLowerCase().includes(lowercaseFilter)
+		);
+	}
+}
+
 class PropertizedTemplate {
 	static PROPERTY_REGEX = /{(.*?)}/g;
 
@@ -155,33 +182,6 @@ class PropertizedTemplate {
 		return this.template.innerHTML.replace(
 			PropertizedTemplate.PROPERTY_REGEX,
 			(_, key) => properties[key.trim()]
-		);
-	}
-}
-
-class Note {
-	/**
-	 * @param {number} id
-	 * @param {string} title
-	 * @param {string} content
-	 * @param {string} createdAt
-	 */
-	constructor(id, title, content, createdAt) {
-		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.createdAt = createdAt;
-	}
-
-	/**
-	 * @param {string} filter
-	 */
-	matchFilter(filter) {
-		const lowercaseFilter = filter.toLowerCase();
-		return (
-			this.title.toLowerCase().includes(lowercaseFilter) ||
-			this.content.toLowerCase().includes(lowercaseFilter) ||
-			this.createdAt.toLowerCase().includes(lowercaseFilter)
 		);
 	}
 }
