@@ -19,7 +19,6 @@ class NoteApp {
 		this.disclaimerButton = ElementUtils.getElement(DISCLAIMER_BUTTON_ID);
 		this.noteTemplate = new PropertizedTemplate(NOTE_TEMPLATE_ID);
 
-		this.listeners = [];
 		this.notes = [
 			new Note(0, 'Note 1', 'Body 1', 'May 22'),
 			new Note(1, 'Note 2', 'Body 2', 'May 22'),
