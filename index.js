@@ -82,10 +82,10 @@ class NoteRenderer {
 			createdAt: note.createdAt,
 		});
 
-		const listItemElement = document.createElement('li');
-		listItemElement.appendChild(noteElement);
+		const liElement = document.createElement('li');
+		liElement.appendChild(noteElement);
 
-		this.root.appendChild(listItemElement);
+		this.root.appendChild(liElement);
 	}
 
 	#clear() {
