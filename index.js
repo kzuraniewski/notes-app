@@ -3,6 +3,7 @@ const NOTE_RENDERER_ROOT_ID = '#note-renderer';
 const SEARCH_BAR_ID = '#search-bar';
 const ADD_NOTE_BUTTON_ID = '#add-note';
 const EMPTY_DISCLAIMER_ID = '#empty-disclaimer';
+const DISCLAIMER_BUTTON_ID = '#disclaimer-button';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const app = new NoteApp();
@@ -15,6 +16,7 @@ class NoteApp {
 		this.addNoteButton = ElementUtils.getElement(ADD_NOTE_BUTTON_ID);
 		this.renderRoot = ElementUtils.getElement(NOTE_RENDERER_ROOT_ID);
 		this.disclaimer = ElementUtils.getElement(EMPTY_DISCLAIMER_ID);
+		this.disclaimerButton = ElementUtils.getElement(DISCLAIMER_BUTTON_ID);
 		this.noteTemplate = new PropertizedTemplate(NOTE_TEMPLATE_ID);
 
 		this.listeners = [];
@@ -31,6 +33,7 @@ class NoteApp {
 		// @ts-ignore
 		this.searchBar.addEventListener('input', (event) => this.#render(event.target.value));
 		this.addNoteButton.addEventListener('click', () => this.#addNewNote());
+		this.disclaimerButton.addEventListener('click', () => this.#addNewNote());
 	}
 
 	/**
