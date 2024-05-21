@@ -59,7 +59,35 @@
 
 				<button class="Button Button--full" id="add-note">Add new</button>
 
-				<ul class="NoteList" id="note-renderer"></ul>
+				<div>
+					<div class="Disclaimer Disclaimer--hiddenn">
+						<div class="CircledIcon Disclaimer__icon">
+							<div class="CircledIcon__inner">
+								<img
+									class="CircledIcon__icon"
+									src="public/info-icon.svg"
+									role="presentation"
+								/>
+							</div>
+						</div>
+
+						<h2 class="Disclaimer__title">No notes yet</h2>
+
+						<p class="Disclaimer__description">
+							Add a note to keep track of your learnings.
+						</p>
+
+						<button class="Button Button--secondary">
+							<div class="IconAdornment">
+								<img src="public/add-icon.svg" role="presentation" />
+
+								Add note
+							</div>
+						</button>
+					</div>
+
+					<ul class="NoteList" id="note-renderer"></ul>
+				</div>
 			</div>
 		</main>
 

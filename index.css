@@ -32,9 +32,7 @@ body {
 }
 
 .Button {
-	width: 100%;
 	padding: 0.5rem 1rem;
-	margin: 1.5rem 0;
 	border: none;
 	border-radius: var(--border-radius);
 	background-color: var(--color-accent);
@@ -89,6 +87,7 @@ body {
 .TextField {
 	width: 100%;
 	padding: 8px 12px;
+	margin-bottom: 1.5rem;
 	border-radius: var(--border-radius);
 	background-color: var(--color-primary-muted);
 }
@@ -133,4 +132,49 @@ body {
 .Note__action {
 	background: none;
 	border: none;
+}
+
+.Disclaimer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2.25rem;
+}
+.Disclaimer__icon {
+	margin-bottom: 1rem;
+}
+.Disclaimer__title {
+	font-weight: 500;
+	font-size: 1.25rem;
+	line-height: 1.875rem;
+	margin-bottom: 0.75rem;
+	color: var(--color-text-on-primary-dark);
+}
+.Disclaimer__description {
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+.Disclaimer--hidden {
+	display: none;
+}
+
+.CircledIcon {
+	position: relative;
+	width: 64px;
+	aspect-ratio: 1;
+	background-color: var(--color-primary-muted);
+	border-radius: 50%;
+}
+.CircledIcon__inner {
+	width: 85%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background-color: var(--color-text-on-primary-dark);
+}
+.CircledIcon__inner,
+.CircledIcon__icon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
