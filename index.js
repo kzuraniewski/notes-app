@@ -76,7 +76,7 @@ class NoteRenderer {
 	 * @param {Note} note
 	 */
 	#appendNote(note) {
-		const noteElement = this.noteTemplate.parse({
+		const noteElement = this.noteTemplate.build({
 			title: note.title,
 			content: note.content,
 			createdAt: note.createdAt,
@@ -94,6 +94,8 @@ class NoteRenderer {
 }
 
 class PropertizedTemplate {
+	static PROPERTY_REGEX = /{(.*?)}/g;
+
 	/**
 	 * @param {string} query
 	 */
@@ -110,17 +112,24 @@ class PropertizedTemplate {
 	/**
 	 * @param {Record<string, string>} properties
 	 */
-	parse(properties) {
-		const parsedTemplate = this.template.innerHTML.replace(
-			/{(.*?)}/g,
-			(_, key) => properties[key.trim()]
-		);
+	build(properties) {
+		const parsedTemplate = this.#parseTemplate(properties);
 
 		// TODO: remove redundant div wrapper from result
 		const root = document.createElement('div');
 		root.innerHTML = parsedTemplate;
 
 		return root;
+	}
+
+	/**
+	 * @param {Record<string, string>} properties
+	 */
+	#parseTemplate(properties) {
+		return this.template.innerHTML.replace(
+			PropertizedTemplate.PROPERTY_REGEX,
+			(_, key) => properties[key.trim()]
+		);
 	}
 }
 
