@@ -40,17 +40,19 @@ class NoteApp {
 	 * @param {string} [filter]
 	 */
 	#render(filter) {
-		this.#clearView();
+		this.#clearListView();
 
 		if (!this.notes.length) {
 			ElementUtils.show(this.disclaimer);
+			ElementUtils.hide(this.addNoteButton);
 			return;
 		}
+		ElementUtils.hide(this.disclaimer);
+		ElementUtils.show(this.addNoteButton);
 
 		const filteredNotes = filter
 			? this.notes.filter((note) => note.matchFilter(filter))
 			: this.notes;
-
 		filteredNotes.forEach((note) => this.#renderNote(note));
 	}
 
@@ -76,8 +78,7 @@ class NoteApp {
 		this.renderRoot.appendChild(liElement);
 	}
 
-	#clearView() {
-		ElementUtils.hide(this.disclaimer);
+	#clearListView() {
 		this.renderRoot.innerHTML = '';
 	}
 
