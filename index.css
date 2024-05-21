@@ -12,6 +12,7 @@
 	--color-text-on-primary-dark: #1b1c1e;
 	--color-text-on-primary-light: #5b5c5e;
 	--color-text-on-accent: #ffffff;
+	--color-border: #bcbcbd;
 }
 
 * {
@@ -48,6 +49,20 @@ body {
 }
 .Button:active {
 	background-color: var(--color-accent-active);
+}
+.Button--secondary {
+	border: 1px solid var(--color-border);
+	background-color: var(--color-primary);
+	color: var(--color-text-on-primary-dark);
+}
+.Button--secondary:hover {
+	background-color: var(--color-primary-hover);
+}
+.Button--secondary:active {
+	background-color: var(--color-primary-active);
+}
+.Button--full {
+	width: 100%;
 }
 
 .AppBar {
