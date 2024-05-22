@@ -383,18 +383,6 @@ class NoteCompositionPanel extends AppElement {
 		this.#setup();
 	}
 
-	#setup() {
-		this.close();
-		this.titleField.onChange(() => this.#validate());
-		this.contentField.onChange(() => this.#validate());
-	}
-
-	#validate() {
-		const isAnyEmpty = this.contentField.getValue() === '' || this.titleField.getValue() === '';
-
-		this.submitButton.setEnabled(!isAnyEmpty);
-	}
-
 	/**
 	 * @param {(newNote: Note) => void} submitCallback
 	 */
@@ -431,6 +419,18 @@ class NoteCompositionPanel extends AppElement {
 		this.titleField.clear();
 		this.contentField.clear();
 		this.submitButton.disable();
+	}
+
+	#setup() {
+		this.close();
+		this.titleField.onChange(() => this.#validate());
+		this.contentField.onChange(() => this.#validate());
+	}
+
+	#validate() {
+		const isAnyEmpty = this.contentField.getValue() === '' || this.titleField.getValue() === '';
+
+		this.submitButton.setEnabled(!isAnyEmpty);
 	}
 
 	/**
