@@ -81,10 +81,14 @@ class NoteApp {
 		this.renderRoot.element.innerHTML = '';
 	}
 
-	#addNewNote() {
+	#prepareViewForComposition() {
 		this.searchBar.clear();
 		this.addNoteButton.hide();
 		this.disclaimer.hide();
+	}
+
+	#addNewNote() {
+		this.#prepareViewForComposition();
 
 		this.compositionPanel.queryNew((newNote) => {
 			this.notes.push(newNote);
@@ -97,9 +101,7 @@ class NoteApp {
 	 * @param {Note} existingNote
 	 */
 	#editNote(existingNote) {
-		this.searchBar.clear();
-		this.addNoteButton.hide();
-		this.disclaimer.hide();
+		this.#prepareViewForComposition();
 
 		this.compositionPanel.queryEdit(existingNote, (newNote) => {
 			existingNote.title = newNote.title;
