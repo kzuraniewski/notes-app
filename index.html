@@ -46,6 +46,33 @@
 
 				<button class="Button Button--full" id="add-note">Add new</button>
 
+				<div class="CompositionPanel Container__fluid-panel">
+					<div class="CompositionPanel__header">
+						<h2 class="CompositionPanel__title">Add new note</h2>
+
+						<button class="Button Button--text">Cancel</button>
+					</div>
+
+					<form class="CompositionPanel__form">
+						<!-- <input
+							class="CompositionPanel__field"
+							type="text"
+							placeholder="Type note title..."
+						/> -->
+
+						<div class="CompositionPanel__submit-field">
+							<textarea
+								class="CompositionPanel__field"
+								name="note-description-field"
+								id="note-description-field"
+								placeholder="Type your note..."
+							></textarea>
+
+							<button class="Button CompositionPanel__submit-button" disabled>Add</button>
+						</div>
+					</form>
+				</div>
+
 				<div class="NotePanel">
 					<div class="Disclaimer hidden" id="empty-disclaimer">
 						<div class="CircledIcon Disclaimer__icon">

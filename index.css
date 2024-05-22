@@ -7,11 +7,14 @@
 	--color-primary-active: #bdbdbd;
 	--color-accent: #6b3c9b;
 	--color-accent-hover: #844dba;
+	--color-accent-disabled: #6b3c9b33;
 	--color-accent-active: #5b2f87;
 	--color-text-on-primary: #3b3c3e;
 	--color-text-on-primary-dark: #1b1c1e;
 	--color-text-on-primary-light: #5b5c5e;
+	--color-text-on-primary-anchor: #0f75b8;
 	--color-text-on-accent: #ffffff;
+	--color-text-on-accent-disabled: #1b1c1e5c;
 	--color-border: #bcbcbd;
 }
 
@@ -20,19 +23,37 @@
 }
 
 body {
-	font-family: 'Inter', sans-serif;
 	font-size: 16px;
 	line-height: 1.6rem;
 	background-color: var(--color-primary);
 	color: var(--color-text-on-primary);
+}
+body,
+textarea,
+::placeholder {
+	font-family: 'Inter', sans-serif;
+}
+
+::placeholder {
+	color: var(--color-text-on-primary-light);
+	opacity: 1;
 }
 
 .hidden {
 	display: none !important;
 }
 
-.Container {
+.Container,
+.Container__fluid-panel {
 	padding: 0 16px;
+}
+.Container__fluid-panel {
+	width: 100vw;
+	position: relative;
+	left: 50%;
+	right: 50%;
+	margin-left: -50vw;
+	margin-right: -50vw;
 }
 
 .Button {
@@ -46,22 +67,38 @@ body {
 	text-transform: capitalize;
 	transition: background-color 0.15s;
 }
-.Button:hover {
+.Button:not(:disabled):hover {
 	background-color: var(--color-accent-hover);
 }
-.Button:active {
+.Button:not(:disabled):active {
 	background-color: var(--color-accent-active);
+}
+.Button:disabled {
+	background-color: var(--color-accent-disabled);
+	color: var(--color-text-on-accent-disabled);
 }
 .Button--secondary {
 	border: 1px solid var(--color-border);
 	background-color: var(--color-primary);
 	color: var(--color-text-on-primary-dark);
 }
-.Button--secondary:hover {
+.Button--secondary:not(:disabled):hover {
 	background-color: var(--color-primary-hover);
 }
-.Button--secondary:active {
+.Button--secondary:not(:disabled):active {
 	background-color: var(--color-primary-active);
+}
+.Button--text {
+	padding: 0;
+	border: none;
+	background: none;
+	color: var(--color-text-on-primary-anchor);
+	font-size: 0.875rem;
+	font-weight: 400;
+	letter-spacing: 1px;
+}
+.Button--text:not(:disabled):hover {
+	background: none;
 }
 .Button--full {
 	width: 100%;
@@ -99,6 +136,44 @@ body {
 	width: 100%;
 	border: none;
 	background-color: transparent;
+}
+
+.CompositionPanel {
+	border-top: 1px;
+	border-bottom: 1px;
+	border-style: solid;
+	border-color: var(--color-primary-muted);
+	box-shadow: 0px 0px 16px 0px #00000014;
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
+}
+.CompositionPanel__form {
+	margin-top: 1.5rem;
+}
+.CompositionPanel__header {
+	display: flex;
+	justify-content: space-between;
+}
+.CompositionPanel__title {
+	font-weight: 500;
+}
+.CompositionPanel__field {
+	width: 100%;
+	border: 2px solid var(--color-text-on-primary-dark);
+	border-radius: var(--border-radius);
+	padding: 0.625rem 1rem;
+}
+textarea.CompositionPanel__field {
+	padding-bottom: 1.5rem;
+	min-height: 11rem;
+}
+.CompositionPanel__submit-field {
+	position: relative;
+}
+.CompositionPanel__submit-button {
+	position: absolute;
+	right: 1rem;
+	bottom: 1rem;
 }
 
 .NotePanel {
