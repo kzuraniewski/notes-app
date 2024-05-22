@@ -29,7 +29,6 @@ class NoteApp {
 	#setupEvents() {
 		this.searchBar.onChange((filter) => this.#render(filter));
 		this.addNoteButton.onClick(() => this.#addNewNote());
-		this.disclaimer.onConfirm(() => this.#addNewNote());
 		this.compositionPanel.onCancel(() => {
 			this.compositionPanel.close();
 			this.#render();
@@ -43,7 +42,7 @@ class NoteApp {
 		this.#clearListView();
 
 		if (!this.notes.length || !this.compositionPanel.isHidden()) {
-			this.disclaimer.show();
+			this.disclaimer.queryConfirm(() => this.#addNewNote());
 			this.addNoteButton.hide();
 			return;
 		}
@@ -315,10 +314,17 @@ class Disclaimer extends AppElement {
 	}
 
 	/**
-	 * @param {() => void} callback
+	 * @param {() => void} confirmCallback
 	 */
-	onConfirm(callback) {
-		this.confirmButton.onClick(() => callback());
+	queryConfirm(confirmCallback) {
+		this.show();
+		this.confirmButton.onClick(
+			() => {
+				confirmCallback();
+				this.hide();
+			},
+			{ once: true }
+		);
 	}
 }
 
