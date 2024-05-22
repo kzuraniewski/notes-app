@@ -205,11 +205,17 @@ textarea.CompositionPanel__field {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	gap: 1rem;
+	margin-bottom: 0.5rem;
 }
 .Note__title {
 	font-weight: 500;
-	margin-bottom: 0.5rem;
 	color: var(--color-text-on-primary-dark);
+}
+.Note__title,
+.Note__body {
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .Note__footer {
 	font-size: 0.75rem;
