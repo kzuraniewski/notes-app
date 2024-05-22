@@ -18,9 +18,9 @@ class NoteApp {
 	initialize() {
 		const mockDate = new Date(966, 4, 14);
 		this.notes = [
-			new Note(0, 'Note 1', 'Body 1', mockDate),
-			new Note(1, 'Note 2', 'Body 2', mockDate),
-			new Note(2, 'Note 3', 'Body 3', mockDate),
+			new Note('Note 1', 'Body 1', mockDate),
+			new Note('Note 2', 'Body 2', mockDate),
+			new Note('Note 3', 'Body 3', mockDate),
 		];
 
 		this.#render();
@@ -86,25 +86,25 @@ class NoteApp {
 		this.addNoteButton.hide();
 		this.disclaimer.hide();
 
-		this.compositionPanel.queryNew(({ title, content }) => {
-			const note = new Note(this.notes.length, title, content, new Date(Date.now()));
-			this.notes.push(note);
+		this.compositionPanel.queryNew((newNote) => {
+			this.notes.push(newNote);
 
 			this.#render();
 		});
 	}
 
 	/**
-	 * @param {Note} note
+	 * @param {Note} existingNote
 	 */
-	#editNote(note) {
+	#editNote(existingNote) {
 		this.searchBar.clear();
 		this.addNoteButton.hide();
 		this.disclaimer.hide();
 
-		this.compositionPanel.queryEdit(note, ({ title, content }) => {
-			note.title = title;
-			note.content = content;
+		this.compositionPanel.queryEdit(existingNote, (newNote) => {
+			existingNote.title = newNote.title;
+			existingNote.content = newNote.content;
+			existingNote.createdAt = newNote.createdAt;
 
 			this.#render();
 		});
@@ -117,7 +117,7 @@ class NoteApp {
 		const noteIndex = this.notes.indexOf(note);
 
 		if (noteIndex === -1) {
-			throw new Error(`Note of id ${note.id} is not applicable`);
+			throw new Error(`Note is not applicable`);
 		}
 
 		this.notes.splice(noteIndex, 1);
@@ -128,13 +128,11 @@ class NoteApp {
 
 class Note {
 	/**
-	 * @param {number} id
 	 * @param {string} title
 	 * @param {string} content
 	 * @param {Date} createdAt
 	 */
-	constructor(id, title, content, createdAt) {
-		this.id = id;
+	constructor(title, content, createdAt) {
 		this.title = title;
 		this.content = content;
 		this.createdAt = createdAt;
@@ -396,7 +394,7 @@ class NoteCompositionPanel extends AppElement {
 	}
 
 	/**
-	 * @param {(data: { title: string; content: string }) => void} submitCallback
+	 * @param {(newNote: Note) => void} submitCallback
 	 */
 	queryNew(submitCallback) {
 		this.title.setText(NoteCompositionPanel.ADD_TITLE);
@@ -406,14 +404,14 @@ class NoteCompositionPanel extends AppElement {
 	}
 
 	/**
-	 * @param {Note} note
-	 * @param {(data: { title: string; content: string }) => void} submitCallback
+	 * @param {Note} existingNote
+	 * @param {(updatedNote: Note) => void} submitCallback
 	 */
-	queryEdit(note, submitCallback) {
+	queryEdit(existingNote, submitCallback) {
 		this.title.setText(NoteCompositionPanel.EDIT_TITLE);
 		this.submitButton.setLabel(NoteCompositionPanel.EDIT_BUTTON);
-		this.titleField.setValue(note.title);
-		this.contentField.setValue(note.content);
+		this.titleField.setValue(existingNote.title);
+		this.contentField.setValue(existingNote.content);
 		this.#validate();
 
 		this.#open(submitCallback);
@@ -434,15 +432,16 @@ class NoteCompositionPanel extends AppElement {
 	}
 
 	/**
-	 * @param {(data: { title: string; content: string }) => void} submitCallback
+	 * @param {(note: Note) => void} submitCallback
 	 */
 	#open(submitCallback) {
 		const handleClick = () => {
 			const title = this.titleField.getValue();
 			const content = this.contentField.getValue();
+			const createdAt = new Date(Date.now());
 			this.close();
 
-			submitCallback({ title, content });
+			submitCallback(new Note(title, content, createdAt));
 		};
 
 		this.cancelButton.onClick(() => this.submitButton.offClick(handleClick));
