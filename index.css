@@ -217,10 +217,11 @@ textarea.CompositionPanel__field {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.Note__footer {
+.Note__date {
 	font-size: 0.75rem;
 	margin-top: 0.3rem;
 	color: var(--color-text-on-primary-light);
+	text-transform: capitalize;
 }
 .Note__actions {
 	display: flex;

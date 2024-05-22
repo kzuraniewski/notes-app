@@ -16,10 +16,11 @@ class NoteApp {
 	}
 
 	initialize() {
+		const mockDate = new Date(966, 4, 14);
 		this.notes = [
-			new Note(0, 'Note 1', 'Body 1', 'May 22'),
-			new Note(1, 'Note 2', 'Body 2', 'May 22'),
-			new Note(2, 'Note 3', 'Body 3', 'May 22'),
+			new Note(0, 'Note 1', 'Body 1', mockDate),
+			new Note(1, 'Note 2', 'Body 2', mockDate),
+			new Note(2, 'Note 3', 'Body 3', mockDate),
 		];
 
 		this.#render();
@@ -62,7 +63,7 @@ class NoteApp {
 			{
 				title: note.title,
 				content: note.content,
-				createdAt: note.createdAt,
+				createdAt: note.getFormattedDate(),
 			},
 			{
 				edit: () => this.#editNote(note),
@@ -86,7 +87,7 @@ class NoteApp {
 		this.disclaimer.hide();
 
 		this.compositionPanel.queryNew(({ title, content }) => {
-			const note = new Note(this.notes.length, title, content, 'Today');
+			const note = new Note(this.notes.length, title, content, new Date(Date.now()));
 			this.notes.push(note);
 
 			this.#render();
@@ -130,7 +131,7 @@ class Note {
 	 * @param {number} id
 	 * @param {string} title
 	 * @param {string} content
-	 * @param {string} createdAt
+	 * @param {Date} createdAt
 	 */
 	constructor(id, title, content, createdAt) {
 		this.id = id;
@@ -147,8 +148,28 @@ class Note {
 		return (
 			this.title.toLowerCase().includes(lowercaseFilter) ||
 			this.content.toLowerCase().includes(lowercaseFilter) ||
-			this.createdAt.toLowerCase().includes(lowercaseFilter)
+			this.getFormattedDate().toLowerCase().includes(lowercaseFilter)
 		);
+	}
+
+	getFormattedDate() {
+		const monthAbbreviations = [
+			'jan',
+			'feb',
+			'mar',
+			'apr',
+			'may',
+			'jun',
+			'jul',
+			'aug',
+			'sep',
+			'oct',
+			'nov',
+			'dec',
+		];
+		const month = monthAbbreviations[this.createdAt.getMonth() - 1];
+
+		return `${month} ${this.createdAt.getDate()}`;
 	}
 }
 
@@ -416,8 +437,6 @@ class NoteCompositionPanel extends AppElement {
 	 * @param {(data: { title: string; content: string }) => void} submitCallback
 	 */
 	#open(submitCallback) {
-		// this.contentField.element.focus();
-
 		const handleClick = () => {
 			const title = this.titleField.getValue();
 			const content = this.contentField.getValue();
