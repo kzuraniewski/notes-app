@@ -183,7 +183,7 @@ class PropertizedTemplate {
 		const element = document.querySelector(query);
 
 		if (!(element instanceof HTMLTemplateElement)) {
-			throw new Error(`${element} is not a template`);
+			throw new Error(`Element of query ${query} does not exist or is not a template`);
 		}
 
 		this.template = element;
