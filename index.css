@@ -204,7 +204,7 @@ textarea.CompositionPanel__field {
 .Note__header {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: start;
 	gap: 1rem;
 	margin-bottom: 0.5rem;
 }
