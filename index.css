@@ -1,5 +1,6 @@
 :root {
 	--border-radius: 12px;
+	--transition: 0.15s;
 
 	--color-primary: #ffffff;
 	--color-primary-muted: #eeeff0;
@@ -65,7 +66,7 @@ textarea,
 	line-height: 1.5rem;
 	font-weight: 500;
 	text-transform: capitalize;
-	transition: background-color 0.15s;
+	transition: background-color var(--transition);
 }
 .Button:not(:disabled):hover {
 	background-color: var(--color-accent-hover);
@@ -159,13 +160,17 @@ textarea,
 }
 .CompositionPanel__field {
 	width: 100%;
-	border: 2px solid var(--color-text-on-primary-dark);
+	border: 2px solid var(--color-primary-muted);
 	border-radius: var(--border-radius);
 	padding: 0.625rem 1rem;
+	transition: border-color var(--transition);
 }
 textarea.CompositionPanel__field {
 	padding-bottom: 1.5rem;
 	min-height: 11rem;
+}
+.CompositionPanel__field:focus {
+	border-color: var(--color-text-on-primary-dark);
 }
 .CompositionPanel__submit-field {
 	position: relative;
