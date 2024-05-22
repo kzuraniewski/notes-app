@@ -42,12 +42,12 @@ class NoteApp {
 	#render(filter) {
 		this.#clearListView();
 
-		if (!this.notes.length || !this.compositionPanel.isHidden()) {
+		if (!this.notes.length) {
 			this.disclaimer.queryConfirm(() => this.#addNewNote());
 			this.addNoteButton.hide();
 			return;
 		}
-		this.addNoteButton.show();
+		if (this.compositionPanel.isHidden()) this.addNoteButton.show();
 
 		const filteredNotes = filter
 			? this.notes.filter((note) => note.matchFilter(filter))
