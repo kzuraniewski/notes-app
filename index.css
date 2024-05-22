@@ -44,17 +44,19 @@ textarea,
 	display: none !important;
 }
 
-.Container,
-.Container__fluid-panel {
-	padding: 0 16px;
-}
-.Container__fluid-panel {
+.screen-wide {
 	width: 100vw;
 	position: relative;
 	left: 50%;
 	right: 50%;
 	margin-left: -50vw;
 	margin-right: -50vw;
+}
+
+.Container {
+	padding: 0 16px;
+	max-width: 576px;
+	margin: 0 auto;
 }
 
 .Button {
