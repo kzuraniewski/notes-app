@@ -1,10 +1,3 @@
-const NOTE_TEMPLATE_ID = '#template-note';
-const NOTE_RENDERER_ROOT_ID = '#note-renderer';
-const SEARCH_BAR_ID = '#search-bar';
-const ADD_NOTE_BUTTON_ID = '#add-note';
-const EMPTY_DISCLAIMER_ID = '#empty-disclaimer';
-const DISCLAIMER_BUTTON_ID = '#disclaimer-button';
-
 document.addEventListener('DOMContentLoaded', () => {
 	const app = new NoteApp();
 	app.initialize();
@@ -12,27 +5,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class NoteApp {
 	constructor() {
-		this.searchBar = ElementUtils.getElement(SEARCH_BAR_ID);
-		this.addNoteButton = ElementUtils.getElement(ADD_NOTE_BUTTON_ID);
-		this.renderRoot = ElementUtils.getElement(NOTE_RENDERER_ROOT_ID);
-		this.disclaimer = ElementUtils.getElement(EMPTY_DISCLAIMER_ID);
-		this.disclaimerButton = ElementUtils.getElement(DISCLAIMER_BUTTON_ID);
-		this.noteTemplate = new PropertizedTemplate(NOTE_TEMPLATE_ID);
+		this.searchBar = new Field('#search-bar');
+		this.addNoteButton = new Button('#add-note');
+		this.renderRoot = new AppElement('#note-renderer');
+		this.disclaimer = new Disclaimer('#empty-disclaimer');
+		this.compositionPanel = new NoteCompositionPanel();
+		this.noteTemplate = new PropertizedTemplate('#template-note');
 
+		this.notes = [];
+	}
+
+	initialize() {
 		this.notes = [
 			new Note(0, 'Note 1', 'Body 1', 'May 22'),
 			new Note(1, 'Note 2', 'Body 2', 'May 22'),
 			new Note(2, 'Note 3', 'Body 3', 'May 22'),
 		];
+
+		this.#render();
+		this.#setupEvents();
 	}
 
-	initialize() {
-		this.#render();
-
-		// @ts-ignore
-		this.searchBar.addEventListener('input', (event) => this.#render(event.target.value));
-		this.addNoteButton.addEventListener('click', () => this.#addNewNote());
-		this.disclaimerButton.addEventListener('click', () => this.#addNewNote());
+	#setupEvents() {
+		this.searchBar.onChange((filter) => this.#render(filter));
+		this.addNoteButton.onClick(() => this.#openCompositionView());
+		this.disclaimer.onConfirm(() => this.#openCompositionView());
+		this.compositionPanel.onAdd(({ content }) => this.#createNewNote('New Note', content));
+		this.compositionPanel.onCancel(() => this.#render());
 	}
 
 	/**
@@ -42,12 +41,11 @@ class NoteApp {
 		this.#clearListView();
 
 		if (!this.notes.length) {
-			ElementUtils.show(this.disclaimer);
-			ElementUtils.hide(this.addNoteButton);
+			this.disclaimer.show();
+			this.addNoteButton.hide();
 			return;
 		}
-		ElementUtils.hide(this.disclaimer);
-		ElementUtils.show(this.addNoteButton);
+		this.addNoteButton.show();
 
 		const filteredNotes = filter
 			? this.notes.filter((note) => note.matchFilter(filter))
@@ -74,18 +72,26 @@ class NoteApp {
 		const liElement = document.createElement('li');
 		liElement.appendChild(noteElement);
 
-		this.renderRoot.appendChild(liElement);
+		this.renderRoot.element.appendChild(liElement);
 	}
 
 	#clearListView() {
-		this.renderRoot.innerHTML = '';
+		this.renderRoot.element.innerHTML = '';
 	}
 
-	#addNewNote() {
-		const note = new Note(this.notes.length, 'New Note', '', 'Today');
+	#openCompositionView() {
+		this.searchBar.clear();
+		this.addNoteButton.hide();
+		this.compositionPanel.open();
+	}
+
+	/**
+	 * @param {string} title
+	 * @param {string} content
+	 */
+	#createNewNote(title, content) {
+		const note = new Note(this.notes.length, title, content, 'Today');
 		this.notes.push(note);
-		// @ts-ignore
-		this.searchBar.value = '';
 
 		this.#render();
 	}
@@ -145,7 +151,7 @@ class PropertizedTemplate {
 	 * @param {string} query
 	 */
 	constructor(query) {
-		const element = ElementUtils.getElement(query);
+		const element = document.querySelector(query);
 
 		if (!(element instanceof HTMLTemplateElement)) {
 			throw new Error(`${element} is not a template`);
@@ -197,33 +203,142 @@ class PropertizedTemplate {
 	}
 }
 
-class ElementUtils {
+class AppElement {
 	/**
-	 * Returns a DOM element and asserts it exists
-	 * @param {string} query
-	 * @returns {Element}
+	 * @param {string[]} queryElements
 	 */
-	static getElement(query) {
+	constructor(...queryElements) {
+		const query = queryElements.join(' ');
 		const element = document.querySelector(query);
 
 		if (!element) {
 			throw new Error(`Element of query ${query} does not exist`);
 		}
 
-		return element;
+		this.element = element;
+	}
+
+	hide() {
+		this.element.classList.add('hidden');
+	}
+
+	show() {
+		this.element.classList.remove('hidden');
+	}
+}
+
+class Field extends AppElement {
+	/**
+	 * @param {(value: string) => void} callback
+	 */
+	onChange(callback) {
+		// @ts-ignore
+		this.element.addEventListener('input', (event) => callback(event.target.value));
+	}
+
+	clear() {
+		// @ts-ignore
+		this.element.value = '';
+	}
+
+	getValue() {
+		// @ts-ignore
+		return this.element.value;
+	}
+}
+
+class Button extends AppElement {
+	/**
+	 * @param {() => void} callback
+	 */
+	onClick(callback) {
+		this.element.addEventListener('click', callback);
+	}
+
+	disable() {
+		this.element.setAttribute('disabled', '');
+	}
+
+	enable() {
+		this.element.removeAttribute('disabled');
 	}
 
 	/**
-	 * @param {Element} element
+	 * @param {boolean} enabled
 	 */
-	static hide(element) {
-		element.classList.add('hidden');
+	setEnabled(enabled) {
+		if (enabled) this.enable();
+		else this.disable();
+	}
+}
+
+class Disclaimer extends AppElement {
+	/**
+	 * @param {string} rootQuery
+	 */
+	constructor(rootQuery) {
+		super(rootQuery);
+		this.confirmButton = new Button(rootQuery, 'button');
+
+		this.hide();
 	}
 
 	/**
-	 * @param {Element} element
+	 * @param {() => void} callback
 	 */
-	static show(element) {
-		element.classList.remove('hidden');
+	onConfirm(callback) {
+		this.confirmButton.onClick(() => {
+			this.hide();
+			callback();
+		});
+	}
+}
+
+class NoteCompositionPanel {
+	constructor() {
+		const rootQuery = '#note-composition-panel';
+		this.root = new AppElement(rootQuery);
+		this.contentField = new Field('#note-composition-panel-content');
+		this.cancelButton = new Button('#note-composition-panel-cancel');
+		this.addButton = new Button('#note-composition-panel-add-button');
+
+		this.#setup();
+	}
+
+	#setup() {
+		this.close();
+
+		this.contentField.onChange((text) => {
+			this.addButton.setEnabled(text !== '');
+		});
+		this.cancelButton.onClick(() => this.close());
+	}
+
+	/**
+	 * @param {(data: { content: string }) => void} callback
+	 */
+	onAdd(callback) {
+		this.addButton.onClick(() => {
+			const content = this.contentField.getValue();
+			this.close();
+			callback({ content });
+		});
+	}
+
+	/**
+	 * @param {() => void} callback
+	 */
+	onCancel(callback) {
+		this.cancelButton.onClick(() => callback());
+	}
+
+	open() {
+		this.root.show();
+	}
+
+	close() {
+		this.root.hide();
+		this.contentField.clear();
+		this.addButton.disable();
 	}
 }
