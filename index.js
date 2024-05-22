@@ -65,8 +65,8 @@ class NoteApp {
 				createdAt: note.createdAt,
 			},
 			{
-				edit: () => this.#editNote(note.id),
-				delete: () => this.#deleteNote(note.id),
+				edit: () => this.#editNote(note),
+				delete: () => this.#deleteNote(note),
 			}
 		);
 
@@ -94,30 +94,29 @@ class NoteApp {
 	}
 
 	/**
-	 * @param {number} id
+	 * @param {Note} note
 	 */
-	#editNote(id) {
+	#editNote(note) {
 		this.searchBar.clear();
 		this.addNoteButton.hide();
 		this.disclaimer.hide();
 
-		this.compositionPanel.queryEdit(({ title, content }) => {
-			// ...
+		this.compositionPanel.queryEdit(note, ({ title, content }) => {
+			note.title = title;
+			note.content = content;
 
 			this.#render();
 		});
-
-		this.#render();
 	}
 
 	/**
-	 * @param {number} id
+	 * @param {Note} note
 	 */
-	#deleteNote(id) {
-		const noteIndex = this.notes.findIndex((note) => note.id === id);
+	#deleteNote(note) {
+		const noteIndex = this.notes.indexOf(note);
 
 		if (noteIndex === -1) {
-			throw new Error(`Note of id ${id} does not exist`);
+			throw new Error(`Note of id ${note.id} is not applicable`);
 		}
 
 		this.notes.splice(noteIndex, 1);
@@ -273,6 +272,14 @@ class Field extends AppElement {
 		// @ts-ignore
 		return this.element.value;
 	}
+
+	/**
+	 * @param {string} value
+	 */
+	setValue(value) {
+		// @ts-ignore
+		this.element.value = value;
+	}
 }
 
 class Button extends AppElement {
@@ -346,10 +353,12 @@ class NoteCompositionPanel extends AppElement {
 
 	#setup() {
 		this.close();
+		this.contentField.onChange(() => this.#updateButton());
+	}
 
-		this.contentField.onChange((text) => {
-			this.submitButton.setEnabled(text !== '');
-		});
+	#updateButton() {
+		const text = this.contentField.getValue();
+		this.submitButton.setEnabled(text !== '');
 	}
 
 	/**
@@ -360,9 +369,14 @@ class NoteCompositionPanel extends AppElement {
 	}
 
 	/**
+	 * @param {Note} note
 	 * @param {(data: { title: string; content: string }) => void} submitCallback
 	 */
-	queryEdit(submitCallback) {
+	queryEdit(note, submitCallback) {
+		// this.titleField.setValue(note.title);
+		this.contentField.setValue(note.content);
+		this.#updateButton();
+
 		this.#openWithTitle(NoteCompositionPanel.EDIT_TITLE, submitCallback);
 	}
 
