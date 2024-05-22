@@ -150,6 +150,9 @@ textarea,
 }
 .CompositionPanel__form {
 	margin-top: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 .CompositionPanel__header {
 	display: flex;

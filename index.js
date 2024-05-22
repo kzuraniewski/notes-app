@@ -298,6 +298,14 @@ class Button extends AppElement {
 		if (enabled) this.enable();
 		else this.disable();
 	}
+
+	/**
+	 * @param {string} label
+	 */
+	setLabel(label) {
+		// @ts-ignore
+		this.element.value = label;
+	}
 }
 
 class TextBlock extends AppElement {
@@ -338,12 +346,15 @@ class Disclaimer extends AppElement {
 class NoteCompositionPanel extends AppElement {
 	static ADD_TITLE = 'Add new note';
 	static EDIT_TITLE = 'Edit note';
+	static ADD_BUTTON = 'Add';
+	static EDIT_BUTTON = 'Confirm';
 
 	constructor() {
 		const rootQuery = '#note-composition-panel';
 		super(rootQuery);
 		this.root = new AppElement(rootQuery);
 		this.title = new TextBlock(rootQuery, 'h2');
+		this.titleField = new Field('#note-composition-panel-title');
 		this.contentField = new Field('#note-composition-panel-content');
 		this.cancelButton = new Button('#note-composition-panel-cancel');
 		this.submitButton = new Button('#note-composition-panel-add-button');
@@ -353,19 +364,24 @@ class NoteCompositionPanel extends AppElement {
 
 	#setup() {
 		this.close();
-		this.contentField.onChange(() => this.#updateButton());
+		this.titleField.onChange(() => this.#validate());
+		this.contentField.onChange(() => this.#validate());
 	}
 
-	#updateButton() {
-		const text = this.contentField.getValue();
-		this.submitButton.setEnabled(text !== '');
+	#validate() {
+		const isAnyEmpty = this.contentField.getValue() === '' || this.titleField.getValue() === '';
+
+		this.submitButton.setEnabled(!isAnyEmpty);
 	}
 
 	/**
 	 * @param {(data: { title: string; content: string }) => void} submitCallback
 	 */
 	queryNew(submitCallback) {
-		this.#openWithTitle(NoteCompositionPanel.ADD_TITLE, submitCallback);
+		this.title.setText(NoteCompositionPanel.ADD_TITLE);
+		this.submitButton.setLabel(NoteCompositionPanel.ADD_BUTTON);
+
+		this.#open(submitCallback);
 	}
 
 	/**
@@ -373,11 +389,13 @@ class NoteCompositionPanel extends AppElement {
 	 * @param {(data: { title: string; content: string }) => void} submitCallback
 	 */
 	queryEdit(note, submitCallback) {
-		// this.titleField.setValue(note.title);
+		this.title.setText(NoteCompositionPanel.EDIT_TITLE);
+		this.submitButton.setLabel(NoteCompositionPanel.EDIT_BUTTON);
+		this.titleField.setValue(note.title);
 		this.contentField.setValue(note.content);
-		this.#updateButton();
+		this.#validate();
 
-		this.#openWithTitle(NoteCompositionPanel.EDIT_TITLE, submitCallback);
+		this.#open(submitCallback);
 	}
 
 	/**
@@ -389,26 +407,23 @@ class NoteCompositionPanel extends AppElement {
 
 	close() {
 		this.root.hide();
+		this.titleField.clear();
 		this.contentField.clear();
 		this.submitButton.disable();
 	}
 
 	/**
-	 * @param {string} title
 	 * @param {(data: { title: string; content: string }) => void} submitCallback
 	 */
-	#openWithTitle(title, submitCallback) {
-		this.title.setText(title);
+	#open(submitCallback) {
+		// this.contentField.element.focus();
 
 		const handleClick = () => {
+			const title = this.titleField.getValue();
 			const content = this.contentField.getValue();
 			this.close();
 
-			submitCallback({
-				// TODO: read title
-				title: 'New Note',
-				content,
-			});
+			submitCallback({ title, content });
 		};
 
 		this.cancelButton.onClick(() => this.submitButton.offClick(handleClick));
