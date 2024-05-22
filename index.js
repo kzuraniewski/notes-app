@@ -325,7 +325,7 @@ class Button extends AppElement {
 	 */
 	setLabel(label) {
 		// @ts-ignore
-		this.element.value = label;
+		this.element.innerText = label;
 	}
 }
 
