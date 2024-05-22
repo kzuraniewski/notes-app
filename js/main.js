@@ -196,13 +196,17 @@ class PropertizedTemplate {
 	build(properties, actions) {
 		const parsedTemplate = this.#parseTemplate(properties);
 
-		// TODO: remove redundant div wrapper from result
-		const root = document.createElement('div');
-		root.innerHTML = parsedTemplate;
+		const temporaryRoot = document.createElement('div');
+		temporaryRoot.innerHTML = parsedTemplate;
+		const element = temporaryRoot.firstElementChild;
 
-		this.#hookActions(root, actions);
+		if (!element) {
+			throw new Error('Failed to build from template');
+		}
 
-		return root;
+		this.#hookActions(element, actions);
+
+		return element;
 	}
 
 	/**
