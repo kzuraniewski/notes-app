@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	app.initialize();
 });
 
+/**
+ * @typedef {'title' | 'content' | 'createdAt'} NoteProperty
+ * @typedef {'edit' | 'delete'} NoteEvent
+ */
+
 class NoteApp {
 	constructor() {
 		this.searchBar = new Field('#search-bar');
@@ -10,6 +15,8 @@ class NoteApp {
 		this.renderRoot = new AppElement('#note-renderer');
 		this.disclaimer = new Disclaimer('#empty-disclaimer');
 		this.compositionPanel = new NoteCompositionPanel();
+
+		/** @type {!PropertizedTemplate<NoteProperty, NoteEvent>} */
 		this.noteTemplate = new PropertizedTemplate('#template-note');
 
 		this.notes = [];
@@ -170,6 +177,20 @@ class Note {
 	}
 }
 
+/**
+ * @typedef {Record<PropertyName, string>} TemplateProperties
+ * @template {string} PropertyName
+ */
+
+/**
+ * @typedef {Record<EventName, () => void>} TemplateActions
+ * @template {string} EventName
+ */
+
+/**
+ * @template {string} PropertyName
+ * @template {string} EventName
+ */
 class PropertizedTemplate {
 	static PROPERTY_REGEX = /{(.*?)}/g;
 
@@ -187,8 +208,8 @@ class PropertizedTemplate {
 	}
 
 	/**
-	 * @param {Record<string, string>} properties
-	 * @param {Record<string, () => void>} actions
+	 * @param {TemplateProperties<PropertyName>} properties
+	 * @param {TemplateActions<EventName>} actions
 	 */
 	build(properties, actions) {
 		const parsedTemplate = this.#parseTemplate(properties);
@@ -208,7 +229,7 @@ class PropertizedTemplate {
 
 	/**
 	 * @param {Element} element
-	 * @param {Record<string, () => void>} actions
+	 * @param {TemplateActions<EventName>} actions
 	 */
 	#hookActions(element, actions) {
 		Object.entries(actions).forEach(([event, listener]) => {
@@ -223,7 +244,7 @@ class PropertizedTemplate {
 	}
 
 	/**
-	 * @param {Record<string, string>} properties
+	 * @param {TemplateProperties<PropertyName>} properties
 	 */
 	#parseTemplate(properties) {
 		return this.template.innerHTML.replace(
