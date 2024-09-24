@@ -92,7 +92,6 @@ class NoteApp {
 
 		this.compositionPanel.queryNew((newNote) => {
 			this.notes.push(newNote);
-
 			this.#render();
 		});
 	}
@@ -117,13 +116,11 @@ class NoteApp {
 	 */
 	#deleteNote(note) {
 		const noteIndex = this.notes.indexOf(note);
-
 		if (noteIndex === -1) {
 			throw new Error(`Note is not applicable`);
 		}
 
 		this.notes.splice(noteIndex, 1);
-
 		this.#render();
 	}
 }
