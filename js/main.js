@@ -132,6 +132,21 @@ class NoteApp {
 	}
 }
 
+const monthAbbreviations = [
+	'jan',
+	'feb',
+	'mar',
+	'apr',
+	'may',
+	'jun',
+	'jul',
+	'aug',
+	'sep',
+	'oct',
+	'nov',
+	'dec',
+];
+
 class Note {
 	/**
 	 * @param {string} title
@@ -157,23 +172,11 @@ class Note {
 	}
 
 	getFormattedDate() {
-		const monthAbbreviations = [
-			'jan',
-			'feb',
-			'mar',
-			'apr',
-			'may',
-			'jun',
-			'jul',
-			'aug',
-			'sep',
-			'oct',
-			'nov',
-			'dec',
-		];
-		const month = monthAbbreviations[this.createdAt.getMonth() - 1];
+		const monthIndex = this.createdAt.getMonth() - 1;
+		const month = monthAbbreviations[monthIndex];
+		const day = this.createdAt.getDate();
 
-		return `${month} ${this.createdAt.getDate()}`;
+		return `${month} ${day}`;
 	}
 }
 
