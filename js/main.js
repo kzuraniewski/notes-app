@@ -54,7 +54,7 @@ class NoteApp {
 			this.addNoteButton.hide();
 			return;
 		}
-		if (this.compositionPanel.isHidden()) this.addNoteButton.show();
+		if (this.compositionPanel.isHidden) this.addNoteButton.show();
 
 		const filteredNotes = filter
 			? this.notes.filter((note) => note.matchFilter(filter))
@@ -272,16 +272,16 @@ class AppElement {
 		this.element = element;
 	}
 
+	get isHidden() {
+		return this.element.classList.contains('hidden');
+	}
+
 	hide() {
 		this.element.classList.add('hidden');
 	}
 
 	show() {
 		this.element.classList.remove('hidden');
-	}
-
-	isHidden() {
-		return this.element.classList.contains('hidden');
 	}
 
 	/**
